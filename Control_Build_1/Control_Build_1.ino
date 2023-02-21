@@ -122,6 +122,13 @@ void turnleft() {
   delay(1000);
 }
 
+void turnright() {
+  int pwm = 250;
+  motorR(pwm, -1);
+  motorL(pwm, 1);
+  delay(1000);
+}
+
 void stop() {
   motorR(0, 0);
   motorL(0, 0);
@@ -130,11 +137,30 @@ void stop() {
 
 void path_parkLeft(int SideDistanceLeft,int ForwardDistanceLeft){
   if (ForwardDistanceLeft>0){
-    goforward(distance)
+    goforward(ForwardDistanceLeft);
   } else {
-
+    gobackwards(ForwardDistanceLeft*-1); //removes the negative from the distance value to feed a postive time value into the gobackwards function
   }
+  stop();
+  turnleft();
+  stop();
+  goforward(SideDistanceLeft);
+  stop();
+  turnright();
+  stop();
+}
+
+void path_parkRight(int SideDistanceRight,int ForwardDistanceRight){
+  if (ForwardDistanceRight>0){
+    goforward(ForwardDistanceRight);
+  } else {
+    gobackwards(ForwardDistanceRight*-1); //removes the negative from the distance value to feed a postive time value into the gobackwards function
+  }
+  stop();
   
+  turnright();  stop();
+  goforward(SideDistanceRight);  stop();
+  turnleft();  stop();
 }
 
 bool isPushed(int pushed){
@@ -212,7 +238,7 @@ void loop() {
      stop();
      break;
    case parkRight:
-
+      path_parkRight(SideDistanceRight, ForwardDistanceRight);
      curr_state = still;
      stop();
      break;
