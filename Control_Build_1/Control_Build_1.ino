@@ -18,11 +18,20 @@ int width_counter = 0;
 int length_counter = 0;
 
 // Variables that control the dimensions of the rectangle path
-int l = 30;
-int w = 15;
+int l = 2; //units of seconds
+int w = 1;
 
 // Variables that control the radius of the circle.
-float radius = 1.5;
+float radius = 1.5; //ratio between PWM of Left motor and Right Motor
+int circle_Time = 10; //units of seconds
+
+// Variables that control the Parellel Parking to the Left of the Robot
+int SideDistanceLeft = 1; // variable that assigns how far to the left from the robot the desired parking spot is
+int ForwardDistanceLeft = 1; // variable that assigns how far infront (+) or behind (-) the robot is from the spot
+
+// Variables that control the Parellel Parking to the Right of the Robot
+int SideDistanceRight = 1; // variable that assigns how far to the right from the robot the desired parking spot is
+int ForwardDistanceRight = 1; // variable that assigns how far infront (+) or behind (-) the robot is from the spot
 
 // Defines the various states of the robot
 enum state {
@@ -69,7 +78,7 @@ void motorL(int speed, int direction) {
 }
 
 void path_rectangle(int w, int l) {
-  for (int i = 0; i < 1; i++) { // completes 1/2 of the rectangle six times to make three complete loops
+  for (int i = 0; i < 5; i++) { // completes 1/2 of the rectangle six times to make three complete loops
     goforward(l);
     stop();
     turnleft();
@@ -81,11 +90,13 @@ void path_rectangle(int w, int l) {
   }
 }
 
-void path_circle(float radius){ 
-  int pwmL = 200;
+void path_circle(float radius, int time){ 
+  int pwmL = 125;
   int pwmR = pwmL*radius;
   motorR(pwmR, -1);
   motorL(pwmL, -1);
+  delay(time*1000); //Takes input as seconds and then converts to miliseconds
+  
   //need to make this go only for a certain amount of time
 }
 
@@ -94,20 +105,62 @@ void goforward(int distance) {
   int pwmL = 150;
   motorR(pwmR, -1);
   motorL(pwmL, -1);
-  delay(distance * 50);
+  delay(distance * 1000);
+}
+void gobackwards(int distance) {
+  int pwmR = 150;
+  int pwmL = 150;
+  motorR(pwmR, 1);
+  motorL(pwmL, 1);
+  delay(distance * 1000);
 }
 
 void turnleft() {
-  int pwm = 150;
+  int pwm = 250;
   motorR(pwm, 1);
   motorL(pwm, -1);
-  delay(1000);
+  delay(750);
+}
+
+void turnright() {
+  int pwm = 250;
+  motorR(pwm, -1);
+  motorL(pwm, 1);
+  delay(750);
 }
 
 void stop() {
   motorR(0, 0);
   motorL(0, 0);
   delay(500);
+}
+
+void path_parkLeft(int SideDistanceLeft,int ForwardDistanceLeft){
+  if (ForwardDistanceLeft>0){
+    goforward(ForwardDistanceLeft);
+  } else {
+    gobackwards(ForwardDistanceLeft*-1); //removes the negative from the distance value to feed a postive time value into the gobackwards function
+  }
+  stop();
+  turnleft();
+  stop();
+  goforward(SideDistanceLeft);
+  stop();
+  turnright();
+  stop();
+}
+
+void path_parkRight(int SideDistanceRight,int ForwardDistanceRight){
+  if (ForwardDistanceRight>0){
+    goforward(ForwardDistanceRight);
+  } else {
+    gobackwards(ForwardDistanceRight*-1); //removes the negative from the distance value to feed a postive time value into the gobackwards function
+  }
+  stop();
+  
+  turnright();  stop();
+  goforward(SideDistanceRight);  stop();
+  turnleft();  stop();
 }
 
 bool isPushed(int pushed){
@@ -152,41 +205,45 @@ void loop() {
   //Serial.println(buttonVal);
   bool pushed = isPushed(buttonVal); //returns the state of the button in true for pressed and false for unpressed
   Serial.println(pushed);
-
-  if (pushed) {
-    goforward(20);
-    stop();
-//    turnleft();
-//    stop();
-  }
+  // This is for debugging the use of the push button and checking that the stop function works
+  // if (pushed) {
+  //   goforward(20);
+  //   stop();
+  //   turnleft();
+  //   stop();
+  // }
   
 
-//  if (stateButton == true){  //plan on building this out to define the state of the robot. Want pathDecision to return a state from the 4 availible options (rectangle, circle, park left, park right)
-//    pathCounter+=1;
-//    pathDecision(pathCounter);
-//  }
-//
-//  // switch structure that calls on the specific state as declared by pathDecision()
-//  // this is where we will put our
-//  switch(curr_state) {
-//    case rectangle:
-//      path_rectangle(w, l);
-//      curr_state = still;
-//      break;
-//    case circle:
-//      path_circle(radius);
-//      curr_state = still;
-//      break;
-//    case parkLeft:
-//
-//      
-//      break;
-//    case parkRight:
-//
-//      
-//      break;
-//    case still:
-//      stop();
-//      break;
-//  }
+   if (pushed){  //plan on building this out to define the state of the robot. Want pathDecision to return a state from the 4 availible options (rectangle, circle, park left, park right)
+     pathCounter+=1;
+     pathDecision(pathCounter);
+    }
+
+ // switch structure that calls on the specific state as declared by pathDecision()
+ // Each Case calls the movement function coresponding to the case. After the movement function is complete, it turns the motors off then assigns the case still to ensure that it doesn't repeat the case next time through the loop.
+ switch(curr_state) {
+   case rectangle:
+     path_rectangle(w, l);
+     stop();
+     curr_state = still;
+     break;
+   case circle:
+     path_circle(radius,circle_Time);
+     stop();
+     curr_state = still;
+     break;
+   case parkLeft:
+     path_parkLeft(SideDistanceLeft, ForwardDistanceLeft);
+     curr_state = still;
+     stop();
+     break;
+   case parkRight:
+      path_parkRight(SideDistanceRight, ForwardDistanceRight);
+     curr_state = still;
+     stop();
+     break;
+   case still:
+     stop();
+     break;
+  }
 }
