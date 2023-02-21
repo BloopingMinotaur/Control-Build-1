@@ -22,15 +22,15 @@ int l = 2; //units of seconds
 int w = 1;
 
 // Variables that control the radius of the circle.
-float radius = 1.2; //ratio between PWM of Left motor and Right Motor
+float radius = 1.5; //ratio between PWM of Left motor and Right Motor
 int circle_Time = 10; //units of seconds
 
 // Variables that control the Parellel Parking to the Left of the Robot
-int SideDistanceLeft = 2; // variable that assigns how far to the left from the robot the desired parking spot is
+int SideDistanceLeft = -1; // variable that assigns how far to the left from the robot the desired parking spot is
 int ForwardDistanceLeft = 1; // variable that assigns how far infront (+) or behind (-) the robot is from the spot
 
 // Variables that control the Parellel Parking to the Right of the Robot
-int SideDistanceRight = 2; // variable that assigns how far to the right from the robot the desired parking spot is
+int SideDistanceRight = 1; // variable that assigns how far to the right from the robot the desired parking spot is
 int ForwardDistanceRight = 1; // variable that assigns how far infront (+) or behind (-) the robot is from the spot
 
 // Defines the various states of the robot
@@ -91,7 +91,7 @@ void path_rectangle(int w, int l) {
 }
 
 void path_circle(float radius, int time){ 
-  int pwmL = 200;
+  int pwmL = 125;
   int pwmR = pwmL*radius;
   motorR(pwmR, -1);
   motorL(pwmL, -1);
@@ -105,7 +105,7 @@ void goforward(int distance) {
   int pwmL = 150;
   motorR(pwmR, -1);
   motorL(pwmL, -1);
-  delay(distance * 50);
+  delay(distance * 1000);
 }
 void gobackwards(int distance) {
   int pwmR = 150;
@@ -119,14 +119,14 @@ void turnleft() {
   int pwm = 250;
   motorR(pwm, 1);
   motorL(pwm, -1);
-  delay(1000);
+  delay(750);
 }
 
 void turnright() {
   int pwm = 250;
   motorR(pwm, -1);
   motorL(pwm, 1);
-  delay(1000);
+  delay(750);
 }
 
 void stop() {
