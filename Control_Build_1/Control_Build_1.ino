@@ -27,7 +27,7 @@ int circle_Time = 10; //units of seconds
 
 // Variables that control the Parellel Parking to the Left of the Robot
 int SideDistanceLeft = 1; // variable that assigns how far to the left from the robot the desired parking spot is
-int ForwardDistanceLeft = -1; // variable that assigns how far infront (+) or behind (-) the robot is from the spot
+int ForwardDistanceLeft = 1; // variable that assigns how far infront (+) or behind (-) the robot is from the spot
 
 // Variables that control the Parellel Parking to the Right of the Robot
 int SideDistanceRight = 1; // variable that assigns how far to the right from the robot the desired parking spot is
