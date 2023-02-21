@@ -1,6 +1,0 @@
-{
-    "board": "arduino:avr:uno",
-    "programmer": "arduinoisp",
-    "port": "COM7",
-    "sketch": "Control_Build_1\\Control_Build_1.ino"
-}
