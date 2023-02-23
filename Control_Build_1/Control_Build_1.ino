@@ -18,20 +18,20 @@ int width_counter = 0;
 int length_counter = 0;
 
 // Variables that control the dimensions of the rectangle path
-int l = 2; //units of seconds
-int w = 1;
+int l = 1000; //units of miliseconds
+int w = 750;
 
 // Variables that control the radius of the circle.
-float radius = 1.5; //ratio between PWM of Left motor and Right Motor
-int circle_Time = 10; //units of seconds
+float radius = 1.6; //ratio between PWM of Left motor and Right Motor
+int circle_Time = 10000; //units of miliseconds
 
 // Variables that control the Parellel Parking to the Left of the Robot
-int SideDistanceLeft = 1; // variable that assigns how far to the left from the robot the desired parking spot is
-int ForwardDistanceLeft = 1; // variable that assigns how far infront (+) or behind (-) the robot is from the spot
+int SideDistanceLeft = 200; // variable that assigns how far to the left from the robot the desired parking spot is
+int ForwardDistanceLeft = 500; // variable that assigns how far infront (+) or behind (-) the robot is from the spot
 
 // Variables that control the Parellel Parking to the Right of the Robot
-int SideDistanceRight = 1; // variable that assigns how far to the right from the robot the desired parking spot is
-int ForwardDistanceRight = 1; // variable that assigns how far infront (+) or behind (-) the robot is from the spot
+int SideDistanceRight = 500; // variable that assigns how far to the right from the robot the desired parking spot is
+int ForwardDistanceRight = 200; // variable that assigns how far infront (+) or behind (-) the robot is from the spot
 
 // Defines the various states of the robot
 enum state {
@@ -93,9 +93,14 @@ void path_rectangle(int w, int l) {
 void path_circle(float radius, int time){ 
   int pwmL = 125;
   int pwmR = pwmL*radius;
+  if (pwmR < 125){
+    pwmR = 125;
+  } else if (pwmR > 255){
+    pwmR = 255;
+  }
   motorR(pwmR, -1);
   motorL(pwmL, -1);
-  delay(time*1000); //Takes input as seconds and then converts to miliseconds
+  delay(time)//Takes input miliseconds
   
   //need to make this go only for a certain amount of time
 }
@@ -105,14 +110,14 @@ void goforward(int distance) {
   int pwmL = 150;
   motorR(pwmR, -1);
   motorL(pwmL, -1);
-  delay(distance * 1000);
+  delay(distance);
 }
 void gobackwards(int distance) {
   int pwmR = 150;
   int pwmL = 150;
   motorR(pwmR, 1);
   motorL(pwmL, 1);
-  delay(distance * 1000);
+  delay(distance);
 }
 
 void turnleft() {
