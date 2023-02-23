@@ -91,7 +91,7 @@ void path_rectangle(int w, int l) {
 }
 
 void path_circle(float radius, int time){ 
-  int pwmL = 125;
+  int pwmL = 115;
   int pwmR = pwmL*radius;
   if (pwmR < 125){
     pwmR = 125;
@@ -100,7 +100,7 @@ void path_circle(float radius, int time){
   }
   motorR(pwmR, -1);
   motorL(pwmL, -1);
-  delay(time)//Takes input miliseconds
+  delay(time);//Takes input miliseconds
   
   //need to make this go only for a certain amount of time
 }
