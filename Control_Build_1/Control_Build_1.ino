@@ -124,14 +124,14 @@ void turnleft() {
   int pwm = 250;
   motorR(pwm, 1);
   motorL(pwm, -1);
-  delay(750);
+  delay(600);
 }
 
 void turnright() {
   int pwm = 250;
   motorR(pwm, -1);
   motorL(pwm, 1);
-  delay(750);
+  delay(600);
 }
 
 void stop() {
